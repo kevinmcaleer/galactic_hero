@@ -78,7 +78,7 @@ def display_tune(bitmap, x:int, y:int):
                         # set the game state
                     
                         if x+row_offset == 50:
-                            print(f'y+col_offset: {y+col_offset}')
+#                             print(f'y+col_offset: {y+col_offset}')
                             if y+col_offset == 0: fret_e = True
                             if y+col_offset == 2: fret_d = True
                             if y+col_offset == 4: fret_c = True
@@ -139,32 +139,36 @@ def fret_debug():
     
 def check_buttons():
     """ Check the buttons on the Galactic Unicorn """
-    fail = False
+    win = True
     button_a = GalacticUnicorn.SWITCH_BRIGHTNESS_DOWN
     button_b = GalacticUnicorn.SWITCH_BRIGHTNESS_UP
     button_c = GalacticUnicorn.SWITCH_SLEEP
     button_d = GalacticUnicorn.SWITCH_VOLUME_DOWN
     button_e = GalacticUnicorn.SWITCH_VOLUME_UP
-
-    if gu.is_pressed(button_a) and fret_a:
-        fail = False
-    else:
-        fail = True
     
-    if gu.is_pressed(button_b) and fret_b:
-        fail = False
-    else: fail = True
-    if gu.is_pressed(button_c) and fret_c:
-        fail = False
-    else: fail = True
-    if gu.is_pressed(button_d) and fret_d:
-        fail = False
-    else: fail = True
-    if gu.is_pressed(button_e) and fret_e:
-        fail = False
-    else: fail = True
+    # if gu.is_pressed(button_a):
+    #     print('button a pressed')
+    # if gu.is_pressed(button_b):
+    #     print('button b pressed')
+    # if gu.is_pressed(button_c):
+    #     print('button c pressed')
+    # if gu.is_pressed(button_d):
+    #     print('button d pressed')
+    # if gu.is_pressed(button_e):
+    #     print('button e pressed')
+    
+    tests = {fret_a:button_a, fret_b:button_b, fret_c:button_c, fret_d:button_d, fret_e:button_e}
 
-    return fail
+    for fret, button in tests.items():
+        if fret:
+            if gu.is_pressed(button):
+                win = True
+            else:
+                win = False
+                break
+    
+
+    return win
 
 def check_missed():
     """ Check if the note passed the bridge without a button being pressed """
@@ -189,13 +193,13 @@ while winning:
     display.clear()
     display_board()
     display_tune(tune,x,y)
-    fret_debug()
+#     fret_debug()
     check_missed()
     winning = check_buttons()
     print(f'winning:{winning}')
     x = x + 1
     gu.update(display)
-    sleep(0.1)
+    sleep(0.01)
     offset = x - len(tune[0])
     if offset > WIDTH-4:
         x = x_reset
