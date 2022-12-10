@@ -188,7 +188,8 @@ x = x_reset
 y = 0
 
 winning = True
-while winning:
+lives = 3
+while lives >= 0 :
     display.set_pen(black)
     display.clear()
     display_board()
@@ -196,6 +197,8 @@ while winning:
 #     fret_debug()
     check_missed()
     winning = check_buttons()
+    if not winning:
+        lives -= 1
     print(f'winning:{winning}')
     x = x + 1
     gu.update(display)
