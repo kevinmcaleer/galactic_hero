@@ -9,7 +9,7 @@ from galactic import GalacticUnicorn
 # Set up the display
 gu = GalacticUnicorn()
 display = PicoGraphics(display=DISPLAY)
-gu.set_brightness(0.25)
+gu.set_brightness(0.5)
 WIDTH, HEIGHT = display.get_bounds()
 
 # Set up the colours
@@ -35,7 +35,8 @@ black = create_pen(display, BLACK)
 white = create_pen(display, WHITE)
 
 # Set the fret colours
-fret_colours = {0:red, 1:green, 2:yellow, 3:cyan, 4:orange}
+
+fret_colours = {0:orange, 1:cyan, 2:yellow, 3:green, 4:red}
 
 # Set the game button states
 fret_a = False
@@ -65,34 +66,35 @@ def display_tune(bitmap, x:int, y:int):
     fret_e = False
     # Loop through each row of the bitmap
     for row in bitmap:
+        
         row_offset = 0
         fret_no = 0
         # Loop through each pixel in the row
         for pixel in row:
+            
             # check if row is on screen, within the bounds of the display
-            if len(row)+row_offset < WIDTH:
+            if len(row)-row_offset < WIDTH:
                 if len(bitmap)+(col_offset//2) < HEIGHT:
                     if pixel == '1':
                         colour = fret_colours[col_offset//2]
+                        
                         display.set_pen(colour)
+                        
                         # set the game state
-                    
                         if x+row_offset == 50:
-#                             print(f'y+col_offset: {y+col_offset}')
                             if y+col_offset == 0: fret_e = True
                             if y+col_offset == 2: fret_d = True
                             if y+col_offset == 4: fret_c = True
                             if y+col_offset == 6: fret_b = True
                             if y+col_offset == 8: fret_a = True
                     else:
+                        
                         display.set_pen(black)
 
                     # display the pixel, double width
                     display.pixel(x+row_offset, y+col_offset)
                     display.pixel(x+row_offset, y+col_offset+1)
-                    
-                    
-                          
+                        
             fret_no += 1
             row_offset += 2 
         col_offset += 2
@@ -136,7 +138,6 @@ def fret_debug():
         display.pixel(4,0)
     display.update()
         
-    
 def check_buttons():
     """ Check the buttons on the Galactic Unicorn """
     win = True
@@ -145,18 +146,7 @@ def check_buttons():
     button_c = GalacticUnicorn.SWITCH_SLEEP
     button_d = GalacticUnicorn.SWITCH_VOLUME_DOWN
     button_e = GalacticUnicorn.SWITCH_VOLUME_UP
-    
-    # if gu.is_pressed(button_a):
-    #     print('button a pressed')
-    # if gu.is_pressed(button_b):
-    #     print('button b pressed')
-    # if gu.is_pressed(button_c):
-    #     print('button c pressed')
-    # if gu.is_pressed(button_d):
-    #     print('button d pressed')
-    # if gu.is_pressed(button_e):
-    #     print('button e pressed')
-    
+        
     tests = {fret_a:button_a, fret_b:button_b, fret_c:button_c, fret_d:button_d, fret_e:button_e}
 
     for fret, button in tests.items():
@@ -166,8 +156,6 @@ def check_buttons():
             else:
                 win = False
                 break
-    
-
     return win
 
 def check_missed():
@@ -188,21 +176,22 @@ x = x_reset
 y = 0
 
 winning = True
-lives = 3
+lives = 30
+print(f'Galactic Hero')
+
 while lives >= 0 :
     display.set_pen(black)
     display.clear()
     display_board()
     display_tune(tune,x,y)
-#     fret_debug()
     check_missed()
     winning = check_buttons()
     if not winning:
         lives -= 1
-    print(f'winning:{winning}')
+        print('lost a life, lives remaining:',lives)
     x = x + 1
     gu.update(display)
-    sleep(0.01)
+    sleep(0.001)
     offset = x - len(tune[0])
     if offset > WIDTH-4:
         x = x_reset
