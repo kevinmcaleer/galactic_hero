@@ -9,7 +9,7 @@ from galactic import GalacticUnicorn
 # Set up the display
 gu = GalacticUnicorn()
 display = PicoGraphics(display=DISPLAY)
-gu.set_brightness(0.5)
+gu.set_brightness(0.25)
 WIDTH, HEIGHT = display.get_bounds()
 
 # Set up the colours
@@ -176,10 +176,10 @@ x = x_reset
 y = 0
 
 winning = True
-lives = 30
+lives = 3
 print(f'Galactic Hero')
 
-while lives >= 0 :
+while lives >= 1 :
     display.set_pen(black)
     display.clear()
     display_board()
@@ -191,7 +191,7 @@ while lives >= 0 :
         print('lost a life, lives remaining:',lives)
     x = x + 1
     gu.update(display)
-    sleep(0.001)
+    sleep(0.01)
     offset = x - len(tune[0])
     if offset > WIDTH-4:
         x = x_reset
